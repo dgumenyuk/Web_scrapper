@@ -1,6 +1,4 @@
-import sys
 from bs4 import BeautifulSoup
-import re
 import requests
 from urllib.parse import urlparse, urljoin
 import urllib.request
@@ -21,7 +19,7 @@ def Check(url):
     try:
         request = urllib.request.Request(url)
         response = urllib.request.urlopen(request)
-        if response.status in [204, 301, 308, 400, 401, 403, 404, 408, 410, 500, 501, 502, 503]:
+        if response.status in [204, 301, 308, 400, 401, 404, 408, 410, 500, 501, 502]:
             print(red + response.status + " - " + response.reason + " --> " + url)
         else:
             print(green + " no problem in --> " + url)
