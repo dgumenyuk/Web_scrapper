@@ -1,16 +1,27 @@
 
 import requests
+import sys
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import urllib.request
-
 import re
-#from html.parser import HTMLParser
+from urllib.error import URLError, HTTPError
+
+import colorama
+
+
+colorama.init()
+green = colorama.Fore.GREEN
+yellow = colorama.Fore.YELLOW
+gray = colorama.Fore.LIGHTBLACK_EX
+red = colorama.Fore.RED
+reset = colorama.Fore.RESET
 
 
 from urllib.parse import urlsplit
 
 url = "http://www.stallman.org"
+
 base_url = "{0.scheme}://{0.netloc}/".format(urlsplit(url))  # getting domain name
 print(base_url)
 
@@ -26,10 +37,12 @@ pattern = re.compile(r'href="(.*?)"')
 
 matches = pattern.findall(soup)
 matches_obj = pattern.finditer(soup)
-
-
+for element in matches_obj:
+    print(element.pos)
+    
 internal =[]
 external = []
+broken_links = []
 for element in matches:
     #if ("http://" or "https://") in element:
     #if element.find('http', 0, 5):
@@ -43,13 +56,17 @@ for element in matches:
 
 print("Relative links")
 for i in internal:
-    print(i)
+    print(yellow + i)
     try:
         resp = urllib.request.urlopen(i)
         if resp.code == 200:
-            print("WORKS")
-    except:
-        print("ERROR 404!!!")
+            print(green + "WORKS")
+    except HTTPError as e:
+        print(red + 'The server couldn\'t fulfill the request.')
+        print(red + 'Error code: ', e.code)
+    except URLError as e:
+        print(red + 'We failed to reach a server.')
+        print(red + 'Reason: ', e.reason)
 
 
 print("Absolute links")
@@ -58,6 +75,10 @@ for i in external:
     try:
         resp = urllib.request.urlopen(i)
         if resp.code == 200:
-            print("WORKS")
-    except:
-        print("ERROR 404!!!")
+            print(green + "WORKS")
+    except HTTPError as e:
+        print(red + 'The server couldn\'t fulfill the request.')
+        print(red + 'Error code: ', e.code)
+    except URLError as e:
+        print(red + 'We failed to reach a server.')
+        print(red + 'Reason: ', e.reason)
