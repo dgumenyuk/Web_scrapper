@@ -1,32 +1,117 @@
 
-
 import requests
-from csv import writer
+import sys
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 import urllib.request
 import re
-from html.parser import HTMLParser
+from urllib.error import URLError, HTTPError
+from urllib.parse import urlsplit
+import colorama
 
 
-#http://ethans_fake_twitter_site.surge.sh/
-response = requests.get('https://en.wikipedia.org/wiki/Polytechnique_Montr%C3%A9al')
+colorama.init()
+green = colorama.Fore.GREEN
+yellow = colorama.Fore.YELLOW
+gray = colorama.Fore.LIGHTBLACK_EX
+red = colorama.Fore.RED
+white = colorama.Fore.WHITE
+reset = colorama.Fore.RESET
 
-soup = BeautifulSoup(response.text, 'html.parser')
+url = "http://www.stallman.org"
+
+base_url = "{0.scheme}://{0.netloc}/".format(urlsplit(url))  # getting domain name
+print("Base URL: ")
+print(base_url)
+
+response = requests.get('http://www.stallman.org')
+
+soup = str(BeautifulSoup(response.text, 'html.parser'))
+
+pattern = re.compile(r'href="(.*?)"')
+
+matches = pattern.findall(soup)
+matches_obj = pattern.finditer(soup)
+
+internal = []
+external = []
+all_ = []
+broken_links = []
+plain_text = []
+
+for element in matches:
+    if element[0:4] == "http":
+        external.append(element)
+        all_.append(element)
+    else:
+        element = urljoin(base_url, element)
+        internal.append(element)
+        all_.append(element)
+        
+
+print(white + "Relative links:")
+for i in internal:
+    print("Link: ")
+    print(yellow + i)
+    try:
+        resp = urllib.request.urlopen(i, timeout=10)
+        if resp.code == 200:
+            print(green + "WORKS")
+            print("\n")
+    except HTTPError as e:
+        print(red + "DOES NOT WORK")
+        print(red + 'The server couldn\'t fulfill the request.')
+        print(red + 'Error code: ', e.code)
+        print("\n")
+    except URLError as e:
+        print(red + 'We failed to reach a server.')
+        print(red + 'Reason: ', e.reason)
+        print("\n")
 
 
+print(white + "Absolute links:")
+for i in external:
+    print("Link: ")
+    print(yellow + i)
+    try:
+        resp = urllib.request.urlopen(i, timeout=10)
+        if resp.code == 200:
+            print(green + "WORKS")
+            print("\n")
+    except HTTPError as e:
+        print(red + "DOES NOT WORK")
+        print(red + 'The server couldn\'t fulfill the request.')
+        print(red + 'Error code: ', e.code)
+        print("\n")
+    except URLError as e:
+        print(red + 'We failed to reach a server.')
+        print(red + 'Reason: ', e.reason)
+        print("\n")
+       
 
-#print((str(soup)))
-p = re.findall('http(.*?)"', str(soup))
-#p = re.findall('http.+"', str(soup))
+pattern = re.compile(r' http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+[ .]')
+matches = pattern.findall(soup)
 
-#p = re.findall('(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$', str(soup))
-print(len(p))
+for element in matches:
+    if not(element in all_):
+        plain_text.append(element)
 
-for i in range(len(p)):
-    item = p[i]
-    # ... compute some result based on item ...
-    item = item + "\n"
-    print(item)
+print(white + "Plain text links:")
 
-
-                    
+for i in plain_text:
+    print("Link: ")
+    print(yellow + i)
+    try:
+        resp = urllib.request.urlopen(i, timeout=10)
+        print(green + "WORKS")
+        print("\n")
+    except HTTPError as e:
+        print(red + "DOES NOT WORK")
+        print(red + 'The server couldn\'t fulfill the request.')
+        print(red + 'Error code: ', e.code)
+        print("\n")
+    except URLError as e:
+        print(red + 'We failed to reach a server.')
+        print(red + 'Reason: ', e.reason)
+        print("\n")
+               
