@@ -93,7 +93,8 @@ pattern = re.compile(r' http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-
 matches = pattern.findall(soup)
 
 for element in matches:
-    if not(element in all_):
+    # if not(element in all_):
+    if element not in all_:
         plain_text.append(element)
 
 print(white + "Plain text links:")
