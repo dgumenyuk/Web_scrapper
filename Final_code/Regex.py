@@ -32,13 +32,21 @@ response = requests.get('http://www.stallman.org')
 
 soup = str(BeautifulSoup(response.text, 'html.parser'))
 
+
+
+Plain_TEXT_Link = []
+for Nelement in soup.split():
+	if ("http" or "https") in Nelement and ("href") not in Nelement:
+		Plain_TEXT_Link.append(Nelement)
+
+
 pattern = re.compile(r'href="(.*?)"')
 
 
 matches = pattern.findall(soup)
 matches_obj = pattern.finditer(soup)
-for element in matches_obj:
-    print(element.pos)
+# for element in matches_obj:
+#     print(element.pos)
     
 internal =[]
 external = []
