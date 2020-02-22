@@ -5,6 +5,6 @@ The main script is inside the WEBSCRAPER directory
 
 **WEBSCRAPPER.py script**
 Before launching the script you may need to install colorama. Do this with such command: pip install colorama.
-Use the command = python3 WEBSCRAPER.py to run the script. Enter your url as an input address
+Use the command = python3 WEBSCRAPER.py to run the script. Enter your the url for the website to test.
 
 
