@@ -30,8 +30,6 @@ external_url = set()
 plainText_url = set()
 broken_url = set()
 
-count = 0
-
 def check(url):         # check the url in order to find the broken links
 
     try:
@@ -67,6 +65,9 @@ def link_extractor(url):          # crawl the webSite (url) to extract all the a
     for element in matches:
         element = urljoin(url, element)
 
+        if " " in element:  #this condition is just added in order to prevent from a bad link. (an example in the http://swat.polymtl.ca/index.html)
+            continue
+
         if not valild(element):               # check the validity of the link
             continue
 
@@ -75,45 +76,42 @@ def link_extractor(url):          # crawl the webSite (url) to extract all the a
 
         if base_url not in element:              # correction of prior script in order to reduce the duplication and check the external link without browsing them
             if element not in external_url:
+                print(cyan + "External Link")
                 check(element)
                 external_url.add(element)
             continue
 
+        print(cyan + "Internal Link")
         check(element)                # check the internal link
         urls.add(element)             # create urls to have the internal urls to crawl and browse them
         internal_url.add(element)     # internal_link to have the number of the internal links and prevent from duplication
-        global count
-        count += 1
 
-        print(count)
+    pattern = re.compile(r' http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+[ .]')  # regex that finds all URLs in the plain text
+    matches = pattern.findall(soup)
+
+    for element in matches:
+        element = urljoin(url, element)
+        print(element)
+
+        if " " in element:
+            continue
+
+        if not valid(element):
+            continue
+                                                # same as the actions for the internal and external links
+        if element in internal_url:
+            continue
+
+        if element in external_url:
+            continue
+
+        if base_url not in element:
+            if element not in plainText_url:
+                print(cyan + "Plain Text Link")
+                check(element)
+                plainText_url.add(element)
 
     return urls
-        # if element[0:4] == "http":
-        #     ALLURLS.add(element)
-        #     if is_valild(element):
-        #         external_url.add(element)
-        #         print(cyan + "External link")
-        #         check(element)
-        #
-        # else:                                    # finding internal_url links
-        #     element = urljoin(base_url, element)
-        #     ALLURLS.add(element)
-        #     if is_valild(element):
-        #         internal_url.add(element)
-        #         print(cyan + "Internal link")
-        #         check(element)
-
-
-    # pattern = re.compile(r' http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+[ .]')  # regex that finds all URLs in the plain text
-    # matches = pattern.findall(soup)
-    #
-    # for element in matches:
-    #     if element not in ALLURLS:
-    #           # make sure it was not in internal or external links, then it must be in plain text
-    #         plainText_url.add(element)
-    #         print(cyan + "Plain text link")
-    #         check(element)
-
 # def crawler(url):
 #     links = link_extractor(url)
 #     for link in links:
@@ -124,7 +122,7 @@ if __name__ == "__main__":                             # main class to do the pr
 
 
     URL = input("Please enter a url: ")
-    crawler(URL)
+    link_extractor(URL)
 
     print("=========================================================================================================")
     print(gray + "Total number of the valid links = ", len(internal_url) + len(external_url) + len(plainText_url))
