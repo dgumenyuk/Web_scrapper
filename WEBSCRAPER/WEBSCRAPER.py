@@ -112,17 +112,19 @@ def link_extractor(url):          # crawl the webSite (url) to extract all the a
                 plainText_url.add(element)
 
     return urls
-# def crawler(url):
-#     links = link_extractor(url)
-#     for link in links:
-#         crawler(link)
+
+
+def crawler(url):                        # the crawler function crawls the websites using their internal links
+    links = link_extractor(url)
+    for link in links:
+        crawler(link)
 
 
 if __name__ == "__main__":                             # main class to do the process
 
 
     URL = input("Please enter a url: ")
-    link_extractor(URL)
+    crawler(URL)
 
     print("=========================================================================================================")
     print(gray + "Total number of the valid links = ", len(internal_url) + len(external_url) + len(plainText_url))
