@@ -18,11 +18,13 @@ import colorama
 
 colorama.init()
 green = colorama.Fore.GREEN
+blue = colorama.Fore.BLUE
 cyan = colorama.Fore.CYAN
 gray = colorama.Fore.LIGHTBLACK_EX
 red = colorama.Fore.RED
 yellow = colorama.Fore.YELLOW
 magneta = colorama.Fore.MAGENTA
+white = colorama.Fore.WHITE
 reset = colorama.Fore.RESET
 
 internal_url = set()
@@ -120,11 +122,22 @@ def crawler(url):                        # the crawler function crawls the websi
         crawler(link)
 
 
+
 if __name__ == "__main__":                             # main class to do the process
 
 
     URL = input("Please enter a url: ")
-    crawler(URL)
+
+    CrawlingActivation = ''
+    conditions = ('Y', 'N')
+    while CrawlingActivation.upper() not in conditions:
+        CrawlingActivation = input(white + "Do you want to keep the " + blue + "CRAWLING" + white + " Activated? [Y/n]  ")
+    CrawlingActivation = CrawlingActivation.upper()
+    print(CrawlingActivation)
+    if CrawlingActivation == ("Y"):
+        crawler(URL)
+    if CrawlingActivation == ("N"):
+        link_extractor(URL)
 
     print("=========================================================================================================")
     print(gray + "Total number of the valid links = ", len(internal_url) + len(external_url) + len(plainText_url))
