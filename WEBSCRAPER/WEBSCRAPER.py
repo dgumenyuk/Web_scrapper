@@ -2,8 +2,8 @@
 This is a program to find  broken links of the website.
 It gives the total number of links, number of internal, external, plain text and broken links.
 
-#Source:
-#https://github.com/dgumenyuk/Web_scrapper/tree/master/WEBSCRAPER
+Source:
+https://github.com/dgumenyuk/Web_scrapper/tree/master/WEBSCRAPER
 
 """
 
@@ -31,8 +31,7 @@ plainText_url = set()
 broken_url = set()
 ALLURLS = set()
 
-def check(url):         # check the url in order to find the broken links
-    #global count
+def checker(url):         # check the url in order to find the broken links
 
     try:
         resp = urllib.request.urlopen(url, timeout=10)
@@ -42,18 +41,13 @@ def check(url):         # check the url in order to find the broken links
     except HTTPError as e:  # execute if the error occured
         print(red + url + "\nis broken" + "\nWe failed to reach a server for the: " + url)
         print(red + 'Error code: ', e.code)
-        ALLURLS.add(url)
-        broken_url.add(url)
         print("\n")
-        #count += 1
 
     except URLError as e:
         print(red + url + "\nis broken" + "\nWe failed to reach a server for the: " + url)
         print(red + 'Reason: ', e.reason)
-        ALLURLS.add(url)
-        broken_url.add(url)
         print("\n")
-        #count += 1
+
 
 def is_valild(url):        # check the validity of the url using the url protocol and the domain
     parsed = urlparse(url)
@@ -109,11 +103,3 @@ if __name__ == "__main__":                             # main class to do the pr
     print(gray + "Total number of the valid links in the body text = ", len(plainText_url))
     print("=========================================================================================================")
     print(yellow + "Total number of the dead links (forbidden, not found, inaccessible) are ", len(broken_url))
-
-
-
-
-
-
-
-
