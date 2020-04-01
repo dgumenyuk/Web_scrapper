@@ -154,10 +154,11 @@ if __name__ == "__main__":                             # main class to do the pr
     #     if CrawlingActivation == ("N"):
     #         link_extractor(URL)
     #
-    # if int(Specifier) == 3:
-    #     print("\nPlease be aware in this situatuion the Crawling is deactivated")
-    #     URL = input("\nPlease enter the address of the file containing unlaunched wesites: ")
-    #     link_extractor(URL)
+
+    if int(Specifier) == 3:
+        print("\nPlease be aware in this situatuion the Crawling is deactivated")
+        URL = input("\nPlease enter the address of the localhost containing port number: ")
+        link_extractor(URL)
 
 
 
