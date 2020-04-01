@@ -6,7 +6,7 @@ function main(){
 	app_port=0
     name="git_server"
 	check $@
-    echo $app_port
+    #echo $app_port
     echo $url
     server_install 
     
@@ -61,10 +61,15 @@ function server_install(){
     else
         printf '%s\n' "Starting server on default port 3000..."
     fi
-
-    #npm start
-
+    
     server="http://127.0.0.1:$app_port"
+    echo "Enter in your browser: $server"
+
+    npm start
+
+
+
+
 
     #echo "BASH" | python3 WEBSCRAPER.py $server 
     #python3 ./WEBSCRAPER.py
