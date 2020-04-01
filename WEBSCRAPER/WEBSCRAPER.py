@@ -123,30 +123,30 @@ def crawler(url):                        # the crawler function crawls the websi
 
 
 def resultPrinter():
-    print("=========================================================================================================")
+    print(gray + "=========================================================================================================")
     print(gray + "Total number of the valid links = ", len(internal_url) + len(external_url) + len(plainText_url))
     print(gray + "Total number of the valid internal_url links = ", len(internal_url))
     print(gray + "Total number of the valid external_url links = ", len(external_url))
     print(gray + "Total number of the valid links in the body text = ", len(plainText_url))
     print("=========================================================================================================")
-    print(yellow + "Total number of the dead links (forbidden, not found, inaccessible) are ", len(broken_url))
+    print(yellow + "Total number of the dead links (forbidden, not found, inaccessible) = ", len(broken_url))
 
 if __name__ == "__main__":                             # main class to do the process
 
-    script = sys.argv[0]
+
 
     Specifier = ''
-    conditionsFileType = ('1', '2', '3')
+    conditionsFileType = ('1', '2', '3', 'BASH')
 
     CrawlingActivation = ''
     conditionsCrawling = ('Y', 'N')
 
     while Specifier not in conditionsFileType:
         Specifier = input(white + "Please specify the type of input method you want to use:\n\n1.a URL (html web page)\n2.a file containing list of urls (a .txt or .csv file)\n3.a list of website file (directories containing unlaunched websites files)\n\nPlease select one of the above options: [1/2/3] ")
-    if int(Specifier) == 1:
-        URL = input("\nPlease enter a url: ")
+    if Specifier == '1':
         while CrawlingActivation.upper() not in conditionsCrawling:
             CrawlingActivation = input("\n" + white + "Do you want to keep the " + blue + "CRAWLING" + white + " Activated? [Y/n]  ")
+        URL = input("\nPlease enter a url: ")
         CrawlingActivation = CrawlingActivation.upper()
         if CrawlingActivation == ("Y"):
             crawler(URL)
@@ -167,13 +167,9 @@ if __name__ == "__main__":                             # main class to do the pr
     #         link_extractor(URL)
     #
 
-    if int(Specifier) == 3:
-        print(yellow + "\nPlease be aware in this situatuion the Crawling is deactivated")
-        print(yellow + "the HTML local file should be run using NPM\n")
-        try:
-            URL = sys.argv[1]
-            link_extractor(URL)
-            resultPrinter()
-        except:
-            print(yellow + "you neither insert the localhost nor insert the correct localhost address, the localhost address should be like http://127.0.0.1:3000\n")
-            print(yellow + "*** you need to run the script using this command: " + cyan + "python3 WEBSCRAPER (Correct_Address_of_Your_localhost) ***")
+    if Specifier == 'BASH':
+        print(yellow + "\nThis python script called from the Bash script to scrape the localhost webpage")
+        URL = "http://davehaeffner.com/?fbclid=IwAR0VtN6PFbqkEtN4QBM-K_E2v6U-TYQqLL5JnyV9ti3yDqBfIsD1yN0AYl4"
+        link_extractor(URL)
+        print(yellow + "\nThis python script called from the Bash script to scrape the localhost webpage")
+        resultPrinter()
