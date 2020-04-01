@@ -70,8 +70,8 @@ function server_install(){
 
 
 
-
-    #echo "BASH" | python3 WEBSCRAPER.py $server 
+    cd ..
+    (echo "BASH" && echo "$server") | python3 WEBSCRAPER.py  
     #python3 ./WEBSCRAPER.py
 
 }
