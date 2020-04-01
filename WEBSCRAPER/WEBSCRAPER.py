@@ -173,6 +173,7 @@ if __name__ == "__main__":                             # main class to do the pr
         try:
             URL = sys.argv[1]
             link_extractor(URL)
+            resultPrinter()
         except:
             print(yellow + "you neither insert the localhost nor insert the correct localhost address, the localhost address should be like http://127.0.0.1:3000\n")
             print(yellow + "*** you need to run the script using this command: " + cyan + "python3 WEBSCRAPER (Correct_Address_of_Your_localhost) ***")
