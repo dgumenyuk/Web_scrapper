@@ -125,19 +125,41 @@ def crawler(url):                        # the crawler function crawls the websi
 
 if __name__ == "__main__":                             # main class to do the process
 
-
-    URL = input("Please enter a url: ")
+    Specifier = ''
+    conditionsFileType = ('1', '2', '3')
 
     CrawlingActivation = ''
-    conditions = ('Y', 'N')
-    while CrawlingActivation.upper() not in conditions:
-        CrawlingActivation = input(white + "Do you want to keep the " + blue + "CRAWLING" + white + " Activated? [Y/n]  ")
-    CrawlingActivation = CrawlingActivation.upper()
-    print(CrawlingActivation)
-    if CrawlingActivation == ("Y"):
-        crawler(URL)
-    if CrawlingActivation == ("N"):
-        link_extractor(URL)
+    conditionsCrawling = ('Y', 'N')
+
+    while Specifier not in conditionsFileType:
+        Specifier = input(white + "Please specify the type of input method you want to use:\n\n1.a URL (html web page)\n2.a file containing list of urls (a .txt or .csv file)\n3.a list of website file (directories containing unlaunched websites files)\n\nPlease select one of the above options: [1/2/3] ")
+    if int(Specifier) == 1:
+        URL = input("\nPlease enter a url: ")
+        while CrawlingActivation.upper() not in conditionsCrawling:
+            CrawlingActivation = input("\n" + white + "Do you want to keep the " + blue + "CRAWLING" + white + " Activated? [Y/n]  ")
+        CrawlingActivation = CrawlingActivation.upper()
+        if CrawlingActivation == ("Y"):
+            crawler(URL)
+        if CrawlingActivation == ("N"):
+            link_extractor(URL)
+
+
+    # if int(Specifier) == 2:
+    #     URL = input("\nPlease enter the address of the file (.txt or .csv) containing list of the urls: ")
+    #     while CrawlingActivation.upper() not in conditionsCrawling:
+    #         CrawlingActivation = input("\n" + white + "Do you want to keep the " + blue + "CRAWLING" + white + " Activated? [Y/n]  ")
+    #     CrawlingActivation = CrawlingActivation.upper()
+    #     if CrawlingActivation == ("Y"):
+    #         crawler(URL)
+    #     if CrawlingActivation == ("N"):
+    #         link_extractor(URL)
+    #
+    # if int(Specifier) == 3:
+    #     print("\nPlease be aware in this situatuion the Crawling is deactivated")
+    #     URL = input("\nPlease enter the address of the file containing unlaunched wesites: ")
+    #     link_extractor(URL)
+
+
 
     print("=========================================================================================================")
     print(gray + "Total number of the valid links = ", len(internal_url) + len(external_url) + len(plainText_url))
