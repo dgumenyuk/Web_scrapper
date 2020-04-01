@@ -6,7 +6,7 @@ Source:
 https://github.com/dgumenyuk/Web_scrapper/tree/master/WEBSCRAPER
 
 """
-
+import sys
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
@@ -122,8 +122,18 @@ def crawler(url):                        # the crawler function crawls the websi
         crawler(link)
 
 
+def resultPrinter():
+    print("=========================================================================================================")
+    print(gray + "Total number of the valid links = ", len(internal_url) + len(external_url) + len(plainText_url))
+    print(gray + "Total number of the valid internal_url links = ", len(internal_url))
+    print(gray + "Total number of the valid external_url links = ", len(external_url))
+    print(gray + "Total number of the valid links in the body text = ", len(plainText_url))
+    print("=========================================================================================================")
+    print(yellow + "Total number of the dead links (forbidden, not found, inaccessible) are ", len(broken_url))
 
 if __name__ == "__main__":                             # main class to do the process
+
+    script = sys.argv[0]
 
     Specifier = ''
     conditionsFileType = ('1', '2', '3')
@@ -140,8 +150,10 @@ if __name__ == "__main__":                             # main class to do the pr
         CrawlingActivation = CrawlingActivation.upper()
         if CrawlingActivation == ("Y"):
             crawler(URL)
+            resultPrinter()
         if CrawlingActivation == ("N"):
             link_extractor(URL)
+            resultPrinter()
 
 
     # if int(Specifier) == 2:
@@ -156,16 +168,11 @@ if __name__ == "__main__":                             # main class to do the pr
     #
 
     if int(Specifier) == 3:
-        print("\nPlease be aware in this situatuion the Crawling is deactivated")
-        URL = input("\nPlease enter the address of the localhost containing port number: ")
-        link_extractor(URL)
-
-
-
-    print("=========================================================================================================")
-    print(gray + "Total number of the valid links = ", len(internal_url) + len(external_url) + len(plainText_url))
-    print(gray + "Total number of the valid internal_url links = ", len(internal_url))
-    print(gray + "Total number of the valid external_url links = ", len(external_url))
-    print(gray + "Total number of the valid links in the body text = ", len(plainText_url))
-    print("=========================================================================================================")
-    print(yellow + "Total number of the dead links (forbidden, not found, inaccessible) are ", len(broken_url))
+        print(yellow + "\nPlease be aware in this situatuion the Crawling is deactivated")
+        print(yellow + "the HTML local file should be run using NPM\n")
+        try:
+            URL = sys.argv[1]
+            link_extractor(URL)
+        except:
+            print(yellow + "you neither insert the localhost nor insert the correct localhost address, the localhost address should be like http://127.0.0.1:3000\n")
+            print(yellow + "*** you need to run the script using this command: " + cyan + "python3 WEBSCRAPER (Correct_Address_of_Your_localhost) ***")
