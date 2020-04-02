@@ -225,8 +225,11 @@ if __name__ == "__main__":                             # main class to do the pr
         print(yellow + "In this contirion the Crawler is desabled\n")
         htmlFile = input("Please enter the name of the html file to check: ")
         file = "./" + htmlFile
-        htmlPage_link_extractor(file)
-        resultPrinter(htmlFile)
+        try:
+            htmlPage_link_extractor(file)
+            resultPrinter(htmlFile)
+        except:
+            print(yellow + "you may not copy the index file into the script directory, or you entered the wrong name")
 
 
 
