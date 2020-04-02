@@ -169,7 +169,10 @@ if __name__ == "__main__":                             # main class to do the pr
 
     if Specifier == 'BASH':
         print(yellow + "\nThis python script called from the Bash script to scrape the localhost webpage")
-        URL = "http://davehaeffner.com/?fbclid=IwAR0VtN6PFbqkEtN4QBM-K_E2v6U-TYQqLL5JnyV9ti3yDqBfIsD1yN0AYl4"
-        link_extractor(URL)
-        print(yellow + "\nThis python script called from the Bash script to scrape the localhost webpage")
-        resultPrinter()
+        URL = input("\nPlease enter your localhost server with the correct port: ")
+        try:
+            link_extractor(URL)
+            print(yellow + "\nThis python script called from the Bash script to scrape the localhost webpage")
+            resultPrinter()
+        except:
+            print(yellow + "\nyou may not use a vaild localhost IP or PORT on the github repository")
