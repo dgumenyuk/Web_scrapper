@@ -51,11 +51,13 @@ def check(url):         # check the url in order to find the broken links
         print(red + url + "\nis broken" + "\nWe failed to reach a server for the: " + url)
         print(red + 'Error code: ', e.code)
         print("\n")
+        broken_url.add(url)
 
     except URLError as e:
         print(red + url + "\nis broken" + "\nWe failed to reach a server for the: " + url)
         print(red + 'Reason: ', e.reason)
         print("\n")
+        broken_url.add(url)
 
 
 def valild(url):        # check the validity of the url using the url protocol and the domain
