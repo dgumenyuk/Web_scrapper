@@ -6,9 +6,10 @@ function main(){
 	app_port=3000
     name="git_server"
 	check $@
+    echo $url
     server_install_check 
     
-	exit 0
+	#exit 0
 }
 
 
@@ -53,11 +54,13 @@ function server_install_check(){
     server="http://127.0.0.1:$app_port"
     echo "Enter in your browser: $server"
 
-    npm start 
+    npm start &
+
+    sleep 2
 
     cd ..
 
-    (echo "BASH" && echo "$server") | python3 WEBSCRAPER.py &
+    (echo "BASH" && echo "$server") | python3 WEBSCRAPER.py 
 }
 
 main $@
