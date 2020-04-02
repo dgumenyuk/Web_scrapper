@@ -15,6 +15,7 @@ import re
 from urllib.error import URLError, HTTPError
 from urllib.parse import urlsplit
 import colorama
+import os
 
 colorama.init()
 green = colorama.Fore.GREEN
@@ -26,6 +27,13 @@ yellow = colorama.Fore.YELLOW
 magneta = colorama.Fore.MAGENTA
 white = colorama.Fore.WHITE
 reset = colorama.Fore.RESET
+
+regex = re.compile(r'^(?:http|ftp)s?://' # http:// or https://
+                   r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+                   r'localhost|' #localhost...
+                   r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+                   r'(?::\d+)?' # optional port
+                   r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
 internal_url = set()
 external_url = set()
@@ -55,11 +63,13 @@ def valild(url):        # check the validity of the url using the url protocol a
     return bool(parsed.netloc) and bool(parsed.scheme)
 
 
-def link_extractor(url):          # crawl the webSite (url) to extract all the available links
-    urls = set()
+def URL_link_extractor(url):          # crawl the webSite (url) to extract all the available links
+
     response = requests.get(url)
+    base_url = urlparse(url).netloc   # get the base URL (domain)
     soup = str(BeautifulSoup(response.text, 'html.parser'))  # get the html page as a string
-    base_url = urlparse(url).netloc  # get the base URL (domain)
+
+    urls = set()
 
     pattern = re.compile(r'href="(.*?)"')
     matches = pattern.findall(soup)
@@ -70,10 +80,8 @@ def link_extractor(url):          # crawl the webSite (url) to extract all the a
         try:
             if not valild(element):               # check the validity of the link
                 continue
-
             if element in internal_url:
                 continue
-
             if base_url not in element:              # correction of prior script in order to reduce the duplication and check the external link without browsing them
                 if element not in external_url:
                     print(cyan + "External Link")
@@ -88,7 +96,7 @@ def link_extractor(url):          # crawl the webSite (url) to extract all the a
         except:
             print(red + "there is a problem with the url: ", element)
 
-    pattern = re.compile(r' http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+[ .]')  # regex that finds all URLs in the plain text
+    pattern = re.compile(regex)  # regex that finds all URLs in the plain text
     matches = pattern.findall(soup)
 
     for element in matches:
@@ -96,14 +104,11 @@ def link_extractor(url):          # crawl the webSite (url) to extract all the a
 
         try:
             if not valid(element):
-                continue
-                                                # same as the actions for the internal and external links
+                continue                                    # same as the actions for the internal and external links
             if element in internal_url:
                 continue
-
             if element in external_url:
                 continue
-
             if base_url not in element:
                 if element not in plainText_url:
                     print(cyan + "Plain Text Link")
@@ -116,14 +121,54 @@ def link_extractor(url):          # crawl the webSite (url) to extract all the a
 
 
 def crawler(url):                        # the crawler function crawls the websites using their internal links
-    links = link_extractor(url)
+    links = URL_link_extractor(url)
     for link in links:
         crawler(link)
 
 
-def resultPrinter(url):
+def htmlPage_link_extractor(HTMLpage):
+    file = open(HTMLpage, encoding="utf8")
+    soup = str(BeautifulSoup(file, 'html.parser'))
+
+    urls = set()
+
+    pattern = re.compile(r'href="(.*?)"')
+    matches = pattern.findall(soup)
+
+    for element in matches:
+        if (re.match(regex, element) is not None):
+            try:
+                if not valild(element):               # check the validity of the link
+                    continue
+                if element in external_url:
+                    continue
+                print(cyan + "External Link")
+                check(element)
+                external_url.add(element)
+            except:
+                print(red + "there is a problem with the url: ", element)
+
+    pattern = re.compile(regex)  # regex that finds all URLs in the plain text
+    matches = pattern.findall(soup)
+
+    for element in matches:
+         try:
+             if not valid(element):
+                 continue                                    # same as the actions for the internal and external links
+             if element in plainText_url:
+                 continue
+             print(cyan + "Plain Text Link")
+             check(element)
+             plainText_url.add(element)
+         except:
+             print(red + "there is a problem with the url: ", element)
+##########################################################################################################
+
+
+
+def resultPrinter(urlORfile):
     print(gray + "=========================================================================================================")
-    print(gray + "The result of scraping for the url: " + url)
+    print(gray + "The result of scraping for the: " + urlORfile)
     print(gray + "\nTotal number of the valid links = ", len(internal_url) + len(external_url) + len(plainText_url))
     print(gray + "Total number of the valid internal_url links = ", len(internal_url))
     print(gray + "Total number of the valid external_url links = ", len(external_url))
@@ -142,22 +187,16 @@ if __name__ == "__main__":                             # main class to do the pr
     CrawlingActivation = ''
     conditionsCrawling = ('Y', 'N')
 
+    FinishingCondition = ('End, end, END, E, e')
+
     while Specifier not in conditionsFileType:
-        Specifier = input(white + "Please specify the type of input method you want to use:\n\n1.a URL or multiple URLs\n2.a .txt file containing list of URLs\n3.an HTML page\n\nPlease select one of the above options: [1/2/3] ")
+        Specifier = input(white + "Please specify the type of input method you want to use:\n\n1.a URL or multiple URLs\n2.an HTML page or multiple HTML pages\n3.a .txt file containing list of HTML pages\n\nPlease select one of the above options: [1/2/3] ")
 
 
     if Specifier == '1':
         while CrawlingActivation.upper() not in conditionsCrawling:
             CrawlingActivation = input("\n" + white + "Do you want to keep the " + blue + "CRAWLING" + white + " Activated? [Y/n]  ")
 
-        regex = re.compile(r'^(?:http|ftp)s?://' # http:// or https://
-                           r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-                           r'localhost|' #localhost...
-                           r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-                           r'(?::\d+)?' # optional port
-                           r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-
-        FinishingCondition = ('End, end, END, E, e')
         URLlist = []
 
         while True:
@@ -165,8 +204,10 @@ if __name__ == "__main__":                             # main class to do the pr
             URL = input(white + "\nPlease enter a url: ")
             if (re.match(regex, URL) is not None):
                 URLlist.append(URL)
-            if URL in FinishingCondition:
+            elif URL in FinishingCondition:
                 break
+            else:
+                print(red + "The URL " + cyan + "< " + URL + " >" + red + " is not a correct url address (http[s]://url)")
 
         CrawlingActivation = CrawlingActivation.upper()
         if CrawlingActivation == ("Y"):
@@ -175,10 +216,18 @@ if __name__ == "__main__":                             # main class to do the pr
                 resultPrinter(each)
         if CrawlingActivation == ("N"):
             for each in URLlist:
-                link_extractor(each)
+                URL_link_extractor(each)
                 resultPrinter(each)
 
 
+
+    if Specifier == '2':
+        print(yellow + "Please make sure that you have copied the HTML files in the same directory as the script directory\n")
+        print(yellow + "In this contirion the Crawler is desabled\n")
+        htmlFile = input("Please enter the name of the html file to check: ")
+        file = "./" + htmlFile
+        htmlPage_link_extractor(file)
+        resultPrinter(htmlFile)
 
 
 
@@ -188,7 +237,7 @@ if __name__ == "__main__":                             # main class to do the pr
         print(yellow + "\nThis python script called from the Bash script to scrape the localhost webpage")
         URL = input("\nPlease enter your localhost server with the correct port: ")
         try:
-            link_extractor(URL)
+            URL_link_extractor(URL)
             print(yellow + "\nThis python script called from the Bash script to scrape the localhost webpage")
             resultPrinter(URL)
         except:
