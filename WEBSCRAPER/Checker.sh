@@ -3,7 +3,7 @@
 #url=$1
 
 function main(){
-	app_port=0
+	app_port=3000
     name="git_server"
 	check $@
     #echo $app_port
@@ -55,7 +55,7 @@ function server_install(){
     git clone $url $name 
     cd $name 
     npm i
-    if [ "$app_port" > 0 ]; then
+    if [ "$app_port" != 3000 ]; then
         export PORT="$app_port"
         printf '%s\n' "Starting server on port $app_port..."
     else
