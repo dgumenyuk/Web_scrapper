@@ -6,12 +6,9 @@ function main(){
 	app_port=3000
     name="git_server"
 	check $@
-    #echo $app_port
-    echo $url
-    server_install 
+    server_install_check 
     
-	#exit 0
-
+	exit 0
 }
 
 
@@ -39,19 +36,10 @@ function check(){
         printf '%s\n' "$url does not exist"
         exit 1
     fi
-
-
-
-    #if curl --output /dev/null --silent --head --fail "$url"; then
-     #   printf '%s\n' "$url exist"
-    #else
-     #   printf '%s\n' "$url does not exist"
-    #fi
-
 }
 
 
-function server_install(){
+function server_install_check(){
     git clone $url $name 
     cd $name 
     npm i
@@ -65,16 +53,11 @@ function server_install(){
     server="http://127.0.0.1:$app_port"
     echo "Enter in your browser: $server"
 
-    npm start
-
-
-
+    npm start 
 
     cd ..
 
-    (echo "BASH" && echo "$server") | python3 WEBSCRAPER.py  
-    #python3 ./WEBSCRAPER.py
-
+    (echo "BASH" && echo "$server") | python3 WEBSCRAPER.py &
 }
 
 main $@
