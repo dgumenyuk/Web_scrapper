@@ -220,7 +220,6 @@ if __name__ == "__main__":                             # main class to do the pr
                 resultPrinter(each)
 
 
-
     if Specifier == '2':
         print(yellow + "Please make sure that you have copied the HTML files in the same directory as the script directory\n")
         print(yellow + "In this contirion the Crawler is desabled\n")
@@ -228,8 +227,6 @@ if __name__ == "__main__":                             # main class to do the pr
         file = "./" + htmlFile
         htmlPage_link_extractor(file)
         resultPrinter(htmlFile)
-
-
 
 
 
