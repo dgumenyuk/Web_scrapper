@@ -1,12 +1,16 @@
 ## <b><font color="red"> notice: </font></b>
 ##### <b>this readme file is created with atom and uses some special characters that may not be compatible with your readme reader. please use atom to open it or just take a look into the source code.</b>
+
 ---
+
 # <b>Directory Contents<b>
 
-The <b><font color="green"> Web_scraper </font></b> directory is the main directory (Github repository also) that you can find the <b><font color="green"> git </font></b> directory inside it to check out the logs.
+The <b><font color="green"> Web_scraper </font></b> directory is the main directory (Github repository also) that you can find the <b><font color="green"> git </font></b> directory inside it to check out the logs. the <b><font color="green"> git </font></b> directory is hidden you can find it by showing the hidden files. 
 
 The <b><font color="green"> WEBSCRAPER </font></b> directory is the main directory that you can find the scripts inside it. We have created some extra files in the <b><font color="green"> WEBSCRAPER </font></b> directory that you can use them and test our application also.
+
 ---
+
 # <b> Python Script <b>
 ## <b> Description <b>
 
@@ -82,7 +86,9 @@ you can see the example in command below:
 ```bash
 (echo "3" && echo "listoffile.txt"| python3 WEBSCRAPER.py )
 ```
+
 ---
+
 # <b> Bash Script </b>
 ## <b> Description </b>    
 The script <b><font color="orange"> Checker.sh </font></b> can be used to install the node server from git repository with using its url in order to find all the broken links of the project.    
@@ -93,5 +99,7 @@ You can run the following command through your terminal thorugh the <b><font col
 ```bash
 ./Checker.sh -u < link to github repository > -p < port number to run the server >[optional]    
 ```
+
 ---
+
 #### <b><font color="pink"> We (Dmytro Humeniuk & Mahmood Vahedi) hope you ENJOY </font><b>
