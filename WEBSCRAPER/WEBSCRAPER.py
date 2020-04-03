@@ -1,5 +1,6 @@
 """
-This is a program to find  broken links of the website.
+a work by Dmytro Humeniuk and Mahmood Vahedi
+This is a program to find  broken links of url or html file.
 It gives the total number of links, number of internal, external,
 plain text and broken links.
 
@@ -39,7 +40,7 @@ plainText_url = set()
 broken_url = set()
 
 
-def check(url):    # check the url in order to find the broken links
+def check(url: str):    # check the url in order to find the broken links
 
     try:
         resp = urllib.request.urlopen(url, timeout=10)
@@ -59,12 +60,12 @@ def check(url):    # check the url in order to find the broken links
         broken_url.add(url)
 
 
-def valid(url):        # check the validity of the url using the url protocol and the domain
+def valid(url: str) -> bool:        # check the validity of the url using the url protocol and the domain
     parsed = urlparse(url)
     return bool(parsed.netloc) and bool(parsed.scheme)
 
 
-def URL_link_extractor(url):          # scrape the webSite (url) to extract all the available links
+def URL_link_extractor(url: str) -> set():          # scrape the webSite (url) to extract all the available links
 
     response = requests.get(url)
     base_url = urlparse(url).netloc   # get the base URL (domain)
@@ -121,13 +122,13 @@ def URL_link_extractor(url):          # scrape the webSite (url) to extract all 
     return urls
 
 
-def crawler(url):                        # the crawler function crawls the websites using their internal links
+def crawler(url: set):                        # the crawler function crawls the websites using their internal links
     links = URL_link_extractor(url)
     for link in links:
         crawler(link)
 
 
-def htmlPage_link_extractor(HTMLpage):              # scrape the html page to get the available links
+def htmlPage_link_extractor(HTMLpage: str):              # scrape the html page to get the available links
     file = open(HTMLpage, encoding="utf8")
     soup = str(BeautifulSoup(file, 'html.parser'))
     file.close()
@@ -152,7 +153,6 @@ def htmlPage_link_extractor(HTMLpage):              # scrape the html page to ge
     matches = pattern.findall(soup)
 
     for element in matches:
-
         try:
             if not valid(element):
                 continue                                    # same as the actions for the external links
@@ -161,11 +161,11 @@ def htmlPage_link_extractor(HTMLpage):              # scrape the html page to ge
             print(cyan + "Plain Text Link")
             check(element)
             plainText_url.add(element)
-        except RuntimeError:
+        except Exception:
             print(red + "there is a problem with the url: ", element)
 
 
-def resultPrinter(urlORfile):                   # printing the result of the scraping and crawling
+def resultPrinter(urlORfile: str):                   # printing the result of the scraping and crawling
     print(gray + "=========================================================================================================")
     print(gray + "The result of scraping for the: " + urlORfile)
     print(gray + "\nTotal number of the valid links = ", len(internal_url) + len(external_url) + len(plainText_url))
@@ -187,24 +187,34 @@ if __name__ == "__main__":                             # main class to do the pr
     FinishingCondition = ('End, end, END, E, e')
 
     while Specifier not in conditionsFileType:                   # specifying the input method
-        Specifier = input(white + "Please specify the type of input method you want to use:\n\n1.a URL or multiple URLs\n2.an HTML page or multiple HTML pages\n3.a .txt file containing list of HTML pages\n\nPlease select one of the above options: [1/2/3] ")
-
+        try:
+            Specifier = input(white + "Please specify the type of input method you want to use:\n\n1.a URL or multiple URLs\n2.an HTML page or multiple HTML pages\n3.a .txt file containing list of HTML pages\n\nPlease select one of the above options: [1/2/3] ")
+        except EOFError:
+            print(yellow + "\n\nyou have entered a wrong value for the first input, try again to pipe using [1/2/3]")
+            break
     if Specifier == '1':                                                 # input method as url
         while CrawlingActivation.upper() not in conditionsCrawling:     # crawling activation or deactivation
-            CrawlingActivation = input("\n" + white + "Do you want to keep the " + blue + "CRAWLING" + white + " Activated? [Y/n]  ")
+            try:
+                CrawlingActivation = input("\n" + white + "Do you want to keep the " + blue + "CRAWLING" + white + " Activated? [Y/n]  ")
+            except EOFError:
+                print(yellow + "\n\nyou have entered a wrong value for the second input, try again to pipe using [Y/n]")
+                exit()
 
         URLlist = []
 
         while True:
             print(yellow + "\nif you want to finish the url enterring process please write " + blue + "end" + yellow + " and press Enter")
-            URL = input(blue + "\nPlease enter a url: ")                   # get the urls as input
-            if (re.match(regex, URL) is not None):                # check the input if it's a url or not
-                URLlist.append(URL)
-            elif URL in FinishingCondition:                            # finish the input enterring using end + Enter
-                break
-            else:
-                print(red + "The URL " + cyan + "< " + URL + " >" + red + " is not a correct url address (http[s]://url)")
-
+            try:
+                URL = input(blue + "\nPlease enter a url: ")                   # get the urls as input
+                if (re.match(regex, URL) is not None):                # check the input if it's a url or not
+                    URLlist.append(URL)
+                elif URL in FinishingCondition:                            # finish the input enterring using end + Enter
+                    break
+                else:
+                    print(red + "The URL " + cyan + "< " + URL + " >" + red + " is not a correct url address (http[s]://url)")
+            except EOFError:
+                print(yellow + "you finished the inputting without ending phrase, try again piping using (end)")
+                exit()
         CrawlingActivation = CrawlingActivation.upper()
         if CrawlingActivation == ("Y"):                            # crawling activated
             for each in URLlist:
