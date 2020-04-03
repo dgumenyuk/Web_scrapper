@@ -1,20 +1,19 @@
 #!/bin/bash
 
-#url=$1
 
 function main(){
 	app_port=3000
     name="git_server"
 	check $@
+
     echo $url
-    server_install_check 
-    
-	#exit 0
+    server_install
+
+
 }
 
 
 function check(){
-    #local OPTIND opt i
     while getopts p:u: opt; do
     	case "${opt}" in
     		p) app_port=$OPTARG;;
@@ -22,29 +21,29 @@ function check(){
             \?) help;;
         esac
     done
-    #shift $((OPTIND -1))
 
     if [ "$url" = "" ]; then
 
-        echo "D: you did not supply a url!"
-        exit 1
+        echo "You did not supply a url!" 
+        #exit 1
 
     fi
 
     if git ls-remote "$url" == 0; then
         printf '%s\n' "Your url is valid!"
-    else
-        printf '%s\n' "$url does not exist"
-        exit 1
+    else 
+        printf '%s\n' "$url does not exist" 
+        #exit 1
     fi
+
 }
 
 
-function server_install_check(){
+function server_install(){
     git clone $url $name 
     cd $name 
-    npm i
-    if [ "$app_port" != 3000 ]; then
+    npm i 1> error.txt
+    if [ "$app_port" > 0 ]; then
         export PORT="$app_port"
         printf '%s\n' "Starting server on port $app_port..."
     else
@@ -54,13 +53,23 @@ function server_install_check(){
     server="http://127.0.0.1:$app_port"
     echo "Enter in your browser: $server"
 
-    npm start &
+    npm start & 
 
-    sleep 2
+    sleep 3
 
-    cd ..
+    cd .. 
+    
+    (echo "BASH" && echo "$server") | python3 WEBSCRAPER.py
 
-    (echo "BASH" && echo "$server") | python3 WEBSCRAPER.py 
+    killall node
+
 }
 
-main $@
+errlog=error.txt
+
+main $@ 2> error.txt 
+
+if [[ -s "$errlog" ]]; then
+    echo "If the program wasn't executed completely, search for errors in error.txt"
+fi
+
